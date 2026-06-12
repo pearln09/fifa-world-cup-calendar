@@ -1,0 +1,37 @@
+name: Update FIFA Calendar
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  update-calendar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Restore client_secret.json
+        run: |
+          echo '${{ secrets.CLIENT_SECRET_JSON }}' > client_secret.json
+
+      - name: Restore token.pickle
+        run: |
+          echo "${{ secrets.TOKEN_PICKLE }}" | base64 -d > token.pickle
+
+      - name: Fetch Fixtures
+        run: |
+          python fetch_fifa_fixtures.py
+
+      - name: Update Calendar
+        run: |
+          python update_calendar.py
