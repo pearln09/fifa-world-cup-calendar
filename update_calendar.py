@@ -34,8 +34,66 @@ for match in fixtures:
 
     match_id = match["match_id"]
 
-    title = (
-        f"{match['home']} vs {match['away']}"
+    home = match["home"]
+    away = match["away"]
+
+    home_score = match.get(
+        "home_score"
+    )
+
+    away_score = match.get(
+        "away_score"
+    )
+
+    stage = match.get(
+        "stage",
+        ""
+    )
+
+    group = match.get(
+        "group",
+        ""
+    )
+
+    stadium = match.get(
+        "stadium",
+        ""
+    )
+
+    match_time = match.get(
+        "match_time",
+        ""
+    )
+
+    # Title
+
+    if (
+        home_score is not None
+        and away_score is not None
+    ):
+
+        title = (
+            f"🏆 {home} "
+            f"{home_score}-{away_score} "
+            f"{away}"
+        )
+
+    else:
+
+        title = (
+            f"⚽ {home} vs {away}"
+        )
+
+    # Description
+
+    description = (
+        f"🏆 FIFA World Cup 2026\n\n"
+        f"Match: {home} vs {away}\n"
+        f"Stage: {stage}\n"
+        f"Group: {group}\n"
+        f"Venue: {stadium}\n"
+        f"Match Time: {match_time}\n\n"
+        f"FIFA Match ID: {match_id}"
     )
 
     start_time = match["start"]
@@ -58,8 +116,18 @@ for match in fixtures:
 
         changed = False
 
-        if event["summary"] != title:
+        if (
+            event.get("summary")
+            != title
+        ):
             event["summary"] = title
+            changed = True
+
+        if (
+            event.get("description")
+            != description
+        ):
+            event["description"] = description
             changed = True
 
         if (
@@ -87,23 +155,30 @@ for match in fixtures:
             updated += 1
 
         else:
+
             skipped += 1
 
     else:
 
         event = {
             "summary": title,
+
+            "description": description,
+
             "start": {
                 "dateTime": start_time
             },
+
             "end": {
                 "dateTime": end_time
             },
+
             "extendedProperties": {
                 "private": {
                     "fifaMatchId": match_id
                 }
             },
+
             "reminders": {
                 "useDefault": False,
                 "overrides": [

@@ -66,14 +66,55 @@ for match in data["Results"]:
         )
 
         fixtures.append(
-            {
-                "match_id": match["IdMatch"],
-                "home": home_team,
-                "away": away_team,
-                "start": start_time.isoformat(),
-                "end": end_time.isoformat()
-            }
-        )
+    {
+        "match_id": match["IdMatch"],
+
+        "home": home_team,
+        "away": away_team,
+
+        "home_score": match.get(
+            "HomeTeamScore"
+        ),
+
+        "away_score": match.get(
+            "AwayTeamScore"
+        ),
+
+        "winner": match.get(
+            "Winner"
+        ),
+
+        "match_status": match.get(
+            "MatchStatus"
+        ),
+
+        "match_time": match.get(
+            "MatchTime"
+        ),
+
+        "stage": (
+            match["StageName"][0]["Description"]
+            if match["StageName"]
+            else ""
+        ),
+
+        "group": (
+            match["GroupName"][0]["Description"]
+            if match["GroupName"]
+            else ""
+        ),
+
+        "stadium": (
+            match["Stadium"]["Name"][0]["Description"]
+            if match.get("Stadium")
+            else ""
+        ),
+
+        "start": start_time.isoformat(),
+
+        "end": end_time.isoformat()
+    }
+)
 
     except Exception as e:
         print("Skipped:", e)
